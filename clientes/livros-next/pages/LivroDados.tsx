@@ -39,14 +39,13 @@ export default function LivroDados() {
 
   const incluir = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const livro = {
-      codigo: 0,
-      titulo,
-      resumo,
-      autores: autores.split('\n'),
-      codEditora,
-    };
-    incluirLivro(livro).then(() => {
+    incluirLivro({
+        codigo: "0",
+        titulo,
+        resumo,
+        autores: autores.split('\n'),
+        codEditora,
+      }).then(() => {
       router.push('/LivroLista');
     });
   };

@@ -1,26 +1,23 @@
 import React from 'react';
-import ControleEditora from '../classes/controle/ControleEditora';
 import { Livro } from '../classes/modelo/Livro'; 
-
-const controleEditora = new ControleEditora();
 
 interface LinhaLivroProps {
   livro: Livro;
-  excluir: (codigo: number) => void;
+  excluir: () => void;
+  getNomeEditora: () => string | undefined;
 }
 
-const LinhaLivro: React.FC<LinhaLivroProps> = (props) => {
-  const { livro, excluir } = props;
-  const nomeEditora = controleEditora.getNomeEditora(livro.codEditora);
-
+const LinhaLivro: React.FC<LinhaLivroProps> = ({ livro, excluir, getNomeEditora }) => {
   return (
     <tr>
       <td>{livro.titulo}</td>
       <td>{livro.resumo}</td>
-      <td>{nomeEditora}</td>
+      <td>{getNomeEditora()}</td>
       <td>{livro.autores.join(', ')}</td>
       <td>
-        <button onClick={() => excluir(livro.codigo)}>Excluir</button>
+        <button onClick={excluir} className="btn btn-danger">
+          Excluir
+        </button>
       </td>
     </tr>
   );

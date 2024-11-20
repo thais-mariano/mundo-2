@@ -5,7 +5,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method === 'DELETE') {
 
-      const codigo = Number(req.query.codigo);
+      const codigo = String(req.query.codigo);
       controleLivro.excluir(codigo);
       res.status(200).json({ message: 'Livro excluído com sucesso' });
 
