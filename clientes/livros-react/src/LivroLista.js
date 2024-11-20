@@ -5,7 +5,6 @@ import ControleEditora from "./controle/ControleEditora";
 const controleLivro = new ControleLivros();
 const controleEditora = new ControleEditora();
 
-
 const LinhaLivro = (props) => {
   const { livro, excluir } = props;
 
@@ -39,23 +38,42 @@ const LivroLista = () => {
   const [livros, setLivros] = useState([]);
   const [carregado, setCarregado] = useState(false);
 
+  // useEffect assíncrono com then para obter os livros
   useEffect(() => {
     if (!carregado) {
-      setLivros(controleLivro.obterLivros());
-      setCarregado(true);
+      controleLivro
+        .obterLivros()
+        .then((resultado) => {
+          setLivros(resultado);
+          setCarregado(true);
+        })
+        .catch((erro) => {
+          console.error("Erro ao carregar livros:", erro);
+        });
     }
   }, [carregado]);
 
+  // Método excluir, aguardando finalização da exclusão antes de atualizar
   const excluir = (codigo) => {
-    controleLivro.excluir(codigo);
-    setCarregado(false);
+    controleLivro
+      .excluir(codigo)
+      .then((sucesso) => {
+        if (sucesso) {
+          setCarregado(false); // Recarregar os dados após exclusão
+        } else {
+          console.error("Erro ao excluir o livro");
+        }
+      })
+      .catch((erro) => {
+        console.error("Erro ao excluir o livro:", erro);
+      });
   };
 
   return (
     <main className="w-50 mx-auto">
       <h1>Catálogo de Livros</h1>
       <table className="table-hover table table-striped justify-content-center table-responsive">
-        <thead className="table-dark ">
+        <thead className="table-dark">
           <tr>
             <th scope="col" className="text-white"></th>
             <th scope="col" className="text-white">Título</th>
@@ -65,9 +83,9 @@ const LivroLista = () => {
           </tr>
         </thead>
         <tbody>
-          {livros.map((livro) => (
+          {livros.map((livro, index) => (
             <LinhaLivro
-              key={livro.codigo}
+              key={index} // Usando o índice como chave
               livro={livro}
               excluir={excluir}
             />

@@ -7,11 +7,13 @@ const LivroDados = () => {
   const controleLivro = new ControleLivros();
   const controleEditora = new ControleEditora();
 
+  // Opções de editoras
   const opcoes = controleEditora.getEditoras().map((editora) => ({
     value: editora.codEditora,
     text: editora.nome,
   }));
 
+  // Estados
   const [titulo, setTitulo] = useState('');
   const [resumo, setResumo] = useState('');
   const [autores, setAutores] = useState('');
@@ -19,24 +21,29 @@ const LivroDados = () => {
 
   const navigate = useNavigate();
 
+  // Método para lidar com a seleção no combo
   const tratarCombo = (event) => {
     setCodEditora(Number(event.target.value));
   };
 
-  const incluir = (event) => {
+  // Método incluir com async/await e redirecionamento após inclusão
+  const incluir = async (event) => {
     event.preventDefault();
 
     const livro = {
-      codigo: 0,
-      titulo: titulo,
-      resumo: resumo,
-      autores: autores.split('\n'),
-      codEditora: codEditora,
+      _id: '', // Código inicializado como string vazia para compatibilidade com LivroMongo
+      titulo,
+      resumo,
+      autores: autores.split('\n'), // Divide os autores por linha
+      codEditora,
     };
 
-    controleLivro.incluir(livro);
-
-    navigate('/');
+    try {
+      await controleLivro.incluir(livro); // Inclui o livro no servidor
+      navigate('/'); // Redireciona para a página inicial
+    } catch (error) {
+      console.error("Erro ao incluir o livro:", error);
+    }
   };
 
   return (
@@ -50,6 +57,7 @@ const LivroDados = () => {
             className="form-control"
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
+            required
           />
         </div>
 
@@ -59,12 +67,18 @@ const LivroDados = () => {
             className="form-control"
             value={resumo}
             onChange={(e) => setResumo(e.target.value)}
+            required
           ></textarea>
         </div>
 
         <div className="mb-3">
           <label className="form-label">Editora</label>
-          <select className="form-select" value={codEditora} onChange={tratarCombo}>
+          <select
+            className="form-select"
+            value={codEditora}
+            onChange={tratarCombo}
+            required
+          >
             {opcoes.map((opcao) => (
               <option key={opcao.value} value={opcao.value}>
                 {opcao.text}
@@ -79,6 +93,7 @@ const LivroDados = () => {
             className="form-control"
             value={autores}
             onChange={(e) => setAutores(e.target.value)}
+            required
           ></textarea>
         </div>
 
